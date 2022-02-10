@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form ref="form" :model="form" label-width="120px">
+    <el-form ref="form" :model="form" label-width="200px">
 
       <el-form-item label="阿里云 Access Key">
         <el-input v-model="form.aliyun_access_id" />

@@ -58,6 +58,12 @@ export const constantRoutes = [
         name: '组织信息',
         component: () => import('@/views/originals/index'),
         meta: { title: '组织信息', icon: 'el-icon-office-building' }
+      },
+      {
+        path: '/originals/:original_id/projects',
+        component: () => import('@/views/projects/index'),
+        name: 'OriginalsShow',
+        hidden: true
       }
     ]
   },
@@ -73,7 +79,6 @@ export const constantRoutes = [
       }
     ]
   },
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

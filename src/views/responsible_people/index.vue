@@ -69,6 +69,19 @@
         <el-button :disabled="dialogDisable" type="primary" @click="handleSaveResponsiblePerson">保存</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="警告"
+      :visible.sync="deleteVisible"
+      width="30%"
+      :before-close="handleDeleteClose"
+    >
+      <span>确认删除</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleDeleteClose">取 消</el-button>
+        <el-button type="danger" @click="handleDeleteResponsiblePerson">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 
 </template>
@@ -76,33 +89,31 @@
 <script>
 import { index, show, store, update, destroy } from '@/api/responsible_people'
 
-const ResponsiblePersonOriginData = {
-  id: 0,
-  name: '',
-  phone: ''
-}
-
 export default {
   filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
   },
   data() {
     return {
       responsiblePeople: [
-        ResponsiblePersonOriginData
+        {
+          id: 0,
+          name: '',
+          phone: ''
+        }
       ],
       responsiblePeopleVersion: 0,
-      dialogResponsiblePerson: ResponsiblePersonOriginData,
+      dialogResponsiblePerson: {
+        id: 0,
+        name: '',
+        phone: ''
+      },
       listLoading: true,
       dialogVisible: false,
-      dialogDisable: false
+      dialogDisable: false,
+      deleteVisible: false,
+      deleteLoading: false,
+      deleteResponsiblePersonID: 0,
+      deleteResponsiblePersonName: ''
     }
   },
   created() {
@@ -143,16 +154,31 @@ export default {
         })
       }
     },
-    deleteResponsiblePerson(id) {
-      destroy(id).then(response => {
-        this.deleteListItem(id)
-        this.handleDialogClose()
+    deleteResponsiblePerson(id, name) {
+      this.deleteResponsiblePersonID = id
+      this.deleteResponsiblePersonName = name
+      this.deleteVisible = true
+    },
+    handleDeleteResponsiblePerson() {
+      destroy(this.deleteResponsiblePersonID).then(response => {
+        this.deleteListItem(this.deleteResponsiblePersonID)
+        this.handleDeleteClose()
       })
     },
     handleDialogClose() {
-      this.dialogResponsiblePerson = ResponsiblePersonOriginData
+      this.dialogResponsiblePerson = {
+        id: 0,
+        name: '',
+        phone: ''
+      }
       this.dialogVisible = false
       this.dialogDisable = false
+    },
+    handleDeleteClose() {
+      this.deleteVisible = false
+      this.deleteResponsiblePersonID = 0
+      this.deleteResponsiblePersonName = ''
+      this.deleteLoading = false
     },
     addListItem(responsiblePerson) {
       if (this.responsiblePeople === null) {

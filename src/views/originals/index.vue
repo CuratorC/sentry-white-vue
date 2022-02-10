@@ -43,6 +43,12 @@
         </template>
       </el-table-column>
 
+      <el-table-column align="center" label="项目" width="200">
+        <template slot-scope="scope">
+          <el-button size="mini" type="primary" plain @click="showProjects(scope.row.id)">查看项目</el-button>
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" label="操作" width="200">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="editOriginal(scope.row.id)">编辑</el-button>
@@ -57,7 +63,7 @@
       width="80%"
       :before-close="handleDialogClose"
     >
-      <el-form ref="form" :model="dialogOriginal" label-width="120px">
+      <el-form ref="form" :model="dialogOriginal" label-width="200px">
 
         <el-form-item label="名称">
           <el-input v-model="dialogOriginal.name" />
@@ -98,31 +104,26 @@
 <script>
 import { getList, show, store, update, destroy } from '@/api/originals'
 
-const DialogOriginData = {
-  id: 0,
-  name: '',
-  account_name: '',
-  password: ''
-}
-
 export default {
   filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
   },
   data() {
     return {
       originals: [
-        DialogOriginData
+        {
+          id: 0,
+          name: '',
+          account_name: '',
+          password: ''
+        }
       ],
       originalsVersion: 0,
-      dialogOriginal: DialogOriginData,
+      dialogOriginal: {
+        id: 0,
+        name: '',
+        account_name: '',
+        password: ''
+      },
       listLoading: true,
       dialogVisible: false,
       dialogDisable: false,
@@ -148,6 +149,9 @@ export default {
       show(id).then(response => {
         this.dialogOriginal = response.data
       })
+    },
+    showProjects(id) {
+      this.$router.push({ name: 'OriginalsShow', params: { original_id: id }})
     },
     addOriginal() {
       this.dialogVisible = true
@@ -182,7 +186,12 @@ export default {
       })
     },
     handleDialogClose() {
-      this.dialogOriginal = DialogOriginData
+      this.dialogOriginal = {
+        id: 0,
+        name: '',
+        account_name: '',
+        password: ''
+      }
       this.dialogVisible = false
       this.dialogDisable = false
     },
@@ -193,7 +202,13 @@ export default {
       this.deleteLoading = false
     },
     addListItem(original) {
-      this.originals.push(original)
+      if (this.originals === null) {
+        this.originals = [
+          original
+        ]
+      } else {
+        this.originals.push(original)
+      }
       this.originalsVersion++
     },
     updateListItem(original) {
