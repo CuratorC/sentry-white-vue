@@ -57,7 +57,7 @@
 
         <el-form-item label="项目负责人">
           <el-select
-            v-model="dialogProject.responsible_people"
+            v-model="dialogProject.responsible_people_id"
             multiple
             collapse-tags
             placeholder="请选择"
